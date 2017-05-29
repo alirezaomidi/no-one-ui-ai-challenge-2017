@@ -1,5 +1,6 @@
 from log import log
 from Pos import Pos
+import random
 
 
 def move_strategy(game):
@@ -37,3 +38,11 @@ def move_strategy(game):
                 if empty_neis:
                     log('Moving', pos, 'to', empty_neis[0])
                     return game.move(game.get_board().get_cell(*pos).get_checker(), Pos(*empty_neis[0]))
+
+    # Move it randomly
+    my_poses_with_empty_neis = [i for i in game.get_my_positions()
+                                if set(game.get_neighbors()[i]) & set(game.get_empty_positions())]
+    the_random = random.choice(my_poses_with_empty_neis)
+    the_random_nei = random.choice(game.get_neighbors()[the_random])
+    log('Moving randomly:', the_random, 'to', the_random_nei)
+    return game.move(game.get_board().get_cell(*the_random).get_checker(), Pos(*the_random_nei))
