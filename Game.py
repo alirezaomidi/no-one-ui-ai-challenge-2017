@@ -37,13 +37,13 @@ class Game:
         # generating the neighbours
         cells = Board().get_cells()
         for cell in cells:
-            self.get_neighbors()[cell] = []
+            self.__nei[cell] = []
             for j in range(3):
                 for i in range(8):
                     if i == cell[0] and (j + 1 == cell[1] or j - 1 == cell[1]):
-                        self.get_neighbors()[cell].append((i, j))
+                        self.__nei[cell].append((i, j))
                     if j == cell[1] and ((i + 1) % 8 == cell[0] or (i + 7) % 8 == cell[0]):
-                        self.get_neighbors()[cell].append((i, j))
+                        self.__nei[cell].append((i, j))
 
         # generating lines of dooz
         for i in range(8):
