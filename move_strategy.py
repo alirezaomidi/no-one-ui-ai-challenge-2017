@@ -1,32 +1,39 @@
 from log import log
+from Pos import Pos
 
 
 def move_strategy(game):
     log()
     log('Cycle #', game.get_cycle())
-    log('Starting move strategy')
+    log('Starting move strategy...')
 
     # Check if there is a dooz opportunity
+    my_opps = game.dooz_opportunities(game.get_my_positions())
+    if my_opps:
+        log('Dooz opportunities found')
+        log('Checking if we can dooz by moving')
+        for pos in my_opps:
+            my_neis = [i for i in game.get_neighbors()[pos] if i in game.get_my_positions()]
+            if my_neis:
+                log('Doozing by moving', my_neis[0], 'to', pos)  # TODO choose the best instead of the first
+                return game.move(game.get_board().get_cell(*my_neis[0]).get_checker(), Pos(*pos))
+
+    # Check if we can prevent the enemy from doozing
+    enemy_opps = game.dooz_opportunities(game.get_opp_positions())
+    if len(enemy_opps) == 1:
+        log('Enemy has only one opportunity to dooz. Trying to prevent...')
+        for pos in enemy_opps:
+            my_neis = [i for i in game.get_neighbors()[pos] if i in game.get_my_positions()]
+            if my_neis:
+                log('Can prevent the dooz by moving', my_neis[0], 'to', pos)
+                return game.move(game.get_board().get_cell(*my_neis[0]).get_checker(), Pos(*pos))
+
+    # Get out of current dooz and get back to it in the next cycle
     for line in game.get_lines():
-        my_cells_in_line = [game.get_board().get_cell(i[0], i[1]) for i in line if
-                            game.get_board().get_cell(i[0], i[1]) in game.get_board().get_mycells()]
-        empty_cells_in_line = [game.get_board().get_cell(i[0], i[1]) for i in line if
-                               game.get_board().get_cell(i[0], i[1]) in game.get_board().get_emptycells()]
-
-        if len(my_cells_in_line) == 2 and len(empty_cells_in_line) == 1:
-            empty_cell_neighbors = game.get_neighbors()[(empty_cells_in_line[0].get_pos().getx(),
-                                                         empty_cells_in_line[0].get_pos().gety())]
-            my_cells_in_line = [(i.get_pos().getx(), i.get_pos().gety()) for i in my_cells_in_line]
-            empty_cell_neighbors = [i for i in empty_cell_neighbors if i not in my_cells_in_line]
-            log('Dooz opportunity found:')
-            log('(%d, %d)' % (empty_cells_in_line[0].get_pos().getx(),
-                              empty_cells_in_line[0].get_pos().gety()))
-            log('Neighbors:', empty_cell_neighbors)
-            for cell in empty_cell_neighbors:
-                if cell in [(i.get_pos().getx(), i.get_pos().gety()) for i in game.get_board().get_mycells()]:
-                    print('Moving ', cell)
-                    return game.move(game.get_board().get_cell(cell[0], cell[1]).get_checker(),
-                                     empty_cells_in_line[0].get_pos())
-            log('No neighbor found')
-
-    log('No dooz opportunity found')
+        if len([i for i in line if i in game.get_my_positions()]) == 3:
+            log('Checking if we can move a checker out from dooz', line)
+            for pos in line:
+                empty_neis = [i for i in game.get_neighbors()[pos] if i in game.get_empty_positions()]
+                if empty_neis:
+                    log('Moving', pos, 'to', empty_neis[0])
+                    return game.move(game.get_board().get_cell(*pos).get_checker(), Pos(*empty_neis[0]))
