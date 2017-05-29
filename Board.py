@@ -47,7 +47,6 @@ class Board:
         cell.neighbors.append(self.__cells[((x - 1) % 8,y)])
         return cell.neighbors
 
-
     def get_cells(self):
         return self.__cells
 

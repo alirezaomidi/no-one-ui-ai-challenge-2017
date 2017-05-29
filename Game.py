@@ -31,6 +31,36 @@ class Game:
         self.__server_port = serverport
         self.__teamname = name
         self.__socket = None
+        self.__nei = dict()
+        self.__lines = list()
+
+        # generating the neighbours
+        cells = Board().get_cells()
+        for cell in cells:
+            self.get_neighbors()[cell] = []
+            for j in range(3):
+                for i in range(8):
+                    if i == cell[0] and (j + 1 == cell[1] or j - 1 == cell[1]):
+                        self.get_neighbors()[cell].append((i, j))
+                    if j == cell[1] and ((i + 1) % 8 == cell[0] or (i + 7) % 8 == cell[0]):
+                        self.get_neighbors()[cell].append((i, j))
+
+        # generating lines of dooz
+        for i in range(8):
+            self.__lines.append([(i, 0), (i, 1), (i, 2)])
+        for i in range(3):
+            k = 0
+            for n in range(4):
+                self.__lines.append([])
+                for j in range(k, k + 3):
+                    self.__lines[-1].append((j % 8, i))
+                k += 2
+
+    def get_lines(self):
+        return self.__lines
+
+    def get_neighbors(self):
+        return self.__nei
 
     def get_board(self):
         return self.__board
