@@ -62,6 +62,27 @@ class Game:
     def get_neighbors(self):
         return self.__nei
 
+    # Checks if there is an opportunity to dooz and returns all dooz opportunities
+    # supposing that at least 2 of 3 dooz checkers are in the "positions" list
+    # Returns an empty line in case of no doozes
+    def dooz_opportunities(self, positions):
+        opps = []
+        for line in self.get_lines():
+            if len([i for i in line if i in positions]) == 2:
+                opp = [i for i in line if i not in positions]
+                if opp[0] in self.get_empty_positions():
+                    opps.append(opp[0])
+        return opps
+
+    def get_my_positions(self):
+        return [(i.get_pos().getx(), i.get_pos().gety()) for i in self.get_board().get_mycells()]
+
+    def get_opp_positions(self):
+        return [(i.get_pos().getx(), i.get_pos().gety()) for i in self.get_board().get_oppcells()]
+
+    def get_empty_positions(self):
+        return [(i.get_pos().getx(), i.get_pos().gety()) for i in self.get_board().get_emptycells()]
+
     def get_board(self):
         return self.__board
 
