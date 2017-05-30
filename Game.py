@@ -65,13 +65,22 @@ class Game:
     # Checks if there is an opportunity to dooz and returns all dooz opportunities
     # supposing that at least 2 of 3 dooz checkers are in the "positions" list
     # Returns an empty line in case of no doozes
-    def dooz_opportunities(self, positions):
+    def dooz_opportunities(self, positions, empty_positions=None, by_putting=False):
+        if empty_positions is None:
+            empty_positions = self.get_empty_positions()
         opps = []
         for line in self.get_lines():
             if len([i for i in line if i in positions]) == 2:
                 opp = [i for i in line if i not in positions]
-                if opp[0] in self.get_empty_positions():
+                if opp[0] not in empty_positions:
+                    continue
+                if by_putting:
                     opps.append(opp[0])
+                else:
+                    neighbors = [i for i in self.get_neighbors()[opp[0]] if i not in line]
+                    if set(neighbors) & set(positions):
+                        # there is a neighbor which can move to the dooz opportunity position
+                        opps.append(opp[0])
         return opps
 
     def get_my_positions(self):

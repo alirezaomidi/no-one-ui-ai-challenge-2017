@@ -1,4 +1,4 @@
-from log import log
+from utils import log
 from Pos import Pos
 import random
 
@@ -31,7 +31,7 @@ def move_strategy(game):
             my_neis = [i for i in game.get_neighbors()[pos] if i in game.get_my_positions()]
             if my_neis:
                 log('Can prevent the dooz by moving', my_neis[0], 'to', pos)
-                return game.move(game.get_board().get_cell(*my_neis[0]).get_checker(), Pos(*pos))
+                return game.move(game.get_board().get_cell(*my_neis[0]).get_checker(), Pos(*pos))  # TODO choose the best instead of the first
 
     # Get out of current dooz and get back to it in the next cycle
     for line in game.get_lines():
