@@ -47,6 +47,6 @@ def move_strategy(game):
     my_poses_with_empty_neis = [i for i in game.get_my_positions()
                                 if set(game.get_neighbors()[i]) & set(game.get_empty_positions())]
     the_random = random.choice(my_poses_with_empty_neis)
-    the_random_nei = random.choice(game.get_neighbors()[the_random])
+    the_random_nei = random.choice([i for i in game.get_neighbors()[the_random] if i in game.get_empty_positions()])
     log('Moving randomly:', the_random, 'to', the_random_nei)
     return game.move(game.get_board().get_cell(*the_random).get_checker(), Pos(*the_random_nei))
