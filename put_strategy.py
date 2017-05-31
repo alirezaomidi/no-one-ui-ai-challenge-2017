@@ -34,6 +34,20 @@ def put_strategy(game):
             log('These opportunities will be created:', my_opps)
             return game.put(Pos(*empty_pos))  # TODO choose the best two-way
 
+    # Checking if enemy can make a two-way
+    # Try to prevent
+    log('Checking if enemy can make a two-way...')
+    enemy_two_way_opps = []
+    for empty_pos in game.get_empty_positions():
+        enemy_new_opps = game.dooz_opportunities(game.get_opp_positions() + [empty_pos], by_putting=True)
+        if len(set(enemy_new_opps)) - len(set(enemy_opps)) > 1:
+            enemy_two_way_opps.append(empty_pos)
+    if enemy_two_way_opps:
+        log('Enemy can make two-ways by putting on', enemy_two_way_opps)
+    if len(set(enemy_two_way_opps)) == 1:
+        log('Preventing enemy from making two-ways')
+        return game.put(Pos(*enemy_two_way_opps[0]))
+
     # Couldn't find a two-way
     # Try to put where it will make two-way in the future
     log('Trying to find a two-way by 2 moves')
